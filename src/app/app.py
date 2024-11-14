@@ -1,30 +1,37 @@
-#Modelo breve api
 from flask import Flask, request, jsonify
+from flask_basicauth import BasicAuth
+from textblob import TextBlob
+from sklearn.linear_model import LinearRegression
 import pickle
-import numpy as np
+import os
+
+colunas = ['tamanho','ano','garagem']
+modelo = pickle.load(open('models/modelo.sav','rb'))
 
 app = Flask(__name__)
+app.config['BASIC_AUTH_USERNAME'] = os.environ.get('BASIC_AUTH_USERNAME')
+app.config['BASIC_AUTH_PASSWORD'] = os.environ.get('BASIC_AUTH_PASSWORD')
 
-# Carregar o modelo
-with open("model.pkl", "rb") as f:
-    model = pickle.load(f)
+basic_auth = BasicAuth(app)
 
 @app.route('/')
 def home():
-    return "API de Previsão - Modelo de Machine Learning"
+    return "Minha primeira API."
 
-# Endpoint para fazer previsões
-@app.route('/predict', methods=['POST'])
-def predict():
-    # Receber dados JSON do cliente
-    data = request.get_json()
-    try:
-        # Extração dos dados do JSON
-        input_data = np.array(data["inputs"]).reshape(1, -1)  # Garantir que o input seja 2D
-        prediction = model.predict(input_data)  # Fazer a previsão
-        return jsonify({"prediction": prediction[0]})  # Retornar a previsão
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+@app.route('/sentimento/<frase>')
+@basic_auth.required
+def sentimento(frase):
+    tb = TextBlob(frase)
+    tb_en = tb.translate(to='en')
+    polaridade = tb_en.sentiment.polarity
+    return "polaridade: {}".format(polaridade)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/cotacao/', methods=['POST'])
+@basic_auth.required
+def cotacao():
+    dados = request.get_json()
+    dados_input = [dados[col] for col in colunas]
+    preco = modelo.predict([dados_input])
+    return jsonify(preco=preco[0])
+
+app.run(debug=True, host='0.0.0.0')
