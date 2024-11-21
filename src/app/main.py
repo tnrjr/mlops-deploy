@@ -60,8 +60,57 @@ class DadosPrevisao(BaseModel):
     Pre_escolar_matriculas: float
     IDEB: float
 
-#modelo pkl de previsão
-MODELO_PATH = '../../models/previsaocrimes.pkl'
+def predict_price(dados_previsao: DadosPrevisao):
+    # Carregar o modelo
+    model = joblib.load('../../models/previsaocrimes.pkl')
+
+    # Criar o DataFrame com base nos atributos da classe DadosPrevisao
+    dados = pd.DataFrame([{
+        'Ano': dados_previsao.Ano,
+        'Municipio': dados_previsao.Municipio,
+        'Total_Crimes': dados_previsao.Total_Crimes,
+        'serie_1_matriculas': dados_previsao.serie_1_matriculas,
+        'serie_2_matriculas': dados_previsao.serie_2_matriculas,
+        'serie_3_matriculas': dados_previsao.serie_3_matriculas,
+        'serie_4_matriculas': dados_previsao.serie_4_matriculas,
+        'Anos_finais_docentes': dados_previsao.Anos_finais_docentes,
+        'Anos_finais_escolas': dados_previsao.Anos_finais_escolas,
+        'Anos_iniciais_docentes': dados_previsao.Anos_iniciais_docentes,
+        'Anos_iniciais_escolas': dados_previsao.Anos_iniciais_escolas,
+        'Creche_docentes': dados_previsao.Creche_docentes,
+        'Creche_escolas': dados_previsao.Creche_escolas,
+        'Creche_matriculas': dados_previsao.Creche_matriculas,
+        'Ensino_fundamental_docentes': dados_previsao.Ensino_fundamental_docentes,
+        'Ensino_fundamental_escolas': dados_previsao.Ensino_fundamental_escolas,
+        'Ensino_fundamental_matriculas': dados_previsao.Ensino_fundamental_matriculas,
+        'Ensino_infantil_docentes': dados_previsao.Ensino_infantil_docentes,
+        'Ensino_infantil_escolas': dados_previsao.Ensino_infantil_escolas,
+        'Ensino_infantil_matriculas': dados_previsao.Ensino_infantil_matriculas,
+        'Ensino_medio_docentes': dados_previsao.Ensino_medio_docentes,
+        'Ensino_medio_escolas': dados_previsao.Ensino_medio_escolas,
+        'Ensino_medio_matriculas': dados_previsao.Ensino_medio_matriculas,
+        'Estadual_docentes': dados_previsao.Estadual_docentes,
+        'Estadual_escolas': dados_previsao.Estadual_escolas,
+        'Estadual_matriculas': dados_previsao.Estadual_matriculas,
+        'Federal_docentes': dados_previsao.Federal_docentes,
+        'Federal_escolas': dados_previsao.Federal_escolas,
+        'Federal_matriculas': dados_previsao.Federal_matriculas,
+        'Municipal_docentes': dados_previsao.Municipal_docentes,
+        'Municipal_escolas': dados_previsao.Municipal_escolas,
+        'Municipal_matriculas': dados_previsao.Municipal_matriculas,
+        'Nao_seriada_matriculas': dados_previsao.Nao_seriada_matriculas,
+        'Privado_docentes': dados_previsao.Privado_docentes,
+        'Privado_escolas': dados_previsao.Privado_escolas,
+        'Privado_matriculas': dados_previsao.Privado_matriculas,
+        'Pre_escolar_docentes': dados_previsao.Pre_escolar_docentes,
+        'Pre_escolar_escolas': dados_previsao.Pre_escolar_escolas,
+        'Pre_escolar_matriculas': dados_previsao.Pre_escolar_matriculas,
+        'IDEB': dados_previsao.IDEB
+    }])
+
+    # Realizar a previsão
+    previsao = model.predict(dados)
+    return previsao[0]
 
 #carrega o modelo
 try:
