@@ -64,7 +64,7 @@ class DadosPrevisao(BaseModel):
 @app.post("/dados/")
 def previsao_preco_imovel(DadosPrevisao: DadosPrevisao):
 
-    preco = predict_price(imovel)
+    preco = predict_price(DadosPrevisao)
     
     return {"precoPrevisto": round(preco, 2)}
 
