@@ -61,7 +61,7 @@ class DadosPrevisao(BaseModel):
     IDEB: float
 
 
-@app.post("https://api-educxseg.onrender.com/dados")
+@app.post("/dados/")
 def previsao_preco_imovel(DadosPrevisao: DadosPrevisao):
 
     preco = predict_price(imovel)
