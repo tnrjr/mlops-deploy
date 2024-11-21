@@ -13,3 +13,6 @@ six==1.14.0
 textblob==0.15.3
 Werkzeug==1.0.1
 gunicorn==19.9.0
+fastapi==0.103.1
+uvicorn==0.22.0
+pydantic==1.10.9
