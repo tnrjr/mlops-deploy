@@ -60,6 +60,15 @@ class DadosPrevisao(BaseModel):
     Pre_escolar_matriculas: float
     IDEB: float
 
+
+@app.post("https://api-educxseg.onrender.com/dados")
+def previsao_preco_imovel(DadosPrevisao: DadosPrevisao):
+
+    preco = predict_price(imovel)
+    
+    return {"precoPrevisto": round(preco, 2)}
+
+
 def predict_price(dados_previsao: DadosPrevisao):
     # Carregar o modelo
     model = joblib.load('../../models/previsaocrimes.pkl')
