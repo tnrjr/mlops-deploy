@@ -90,3 +90,6 @@ def previsao_total_crimes(dados: Dados):
         return {"TotalCrimesPrevisto": round(previsao[0], 2)}
     except Exception as e:
         return {"error": str(e)}
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
