@@ -2,7 +2,8 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
@@ -12,22 +13,16 @@ env:
 jobs:
   setup-build-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      # Falha cedo se os secrets não existirem
-      - name: Check required secrets
-        run: |
-          [ -n "${{ secrets.RUN_PROJECT }}" ] || { echo "Missing secret RUN_PROJECT"; exit 1; }
-          [ -n "${{ secrets.RUN_SA_KEY }}" ]   || { echo "Missing secret RUN_SA_KEY"; exit 1; }
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Auth to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.RUN_SA_KEY }}
 
-      - name: Setup gcloud
+      - name: Setup gcloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ env.PROJECT_ID }}
@@ -50,4 +45,3 @@ jobs:
             --port 8000 \
             --project "${{ env.PROJECT_ID }}" \
             --quiet
-
