@@ -1,14 +1,27 @@
-FROM python:3.7-slim
+FROM python:3.11-slim
 
-COPY ./requirements.txt /usr/requirements.txt
 
-WORKDIR /usr
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN pip3 install -r requirements.txt
 
-COPY ./src /usr/src
-COPY ./models /usr/model
 
-ENTRYPOINT [ "python3" ]
 
-CMD [ "src/app/main.py" ]
+WORKDIR /app
+
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+COPY src/ ./src
+COPY models/ /usr/model/
+
+
+ENV MODEL_PATH=/usr/model/model.pkl \
+    PYTHONPATH=/app/src
+
+
+EXPOSE 8000
+
+CMD ["uvicorn","main:app","--host","0.0.0.0","--port","${PORT}"]
